@@ -1,0 +1,182 @@
+/******
+ * 
+ * 		AULA 3
+ * 
+ * *******/
+
+--  IF NULL
+-- NOT NULL
+-- CHECK
+-- CASE
+-- DEFAULT
+-- UNIQUE
+-- ALIAS
+
+
+-- show databases;
+-- show tables;
+-- describe tbAluno;
+-- desc tbAluno
+
+
+
+
+CREATE DATABASE sprint1;
+
+
+SHOW TABLES;	
+
+CREATE TABLE tbSensor(
+	id_Sensor INT PRIMARY KEY AUTO_INCREMENT,
+	tipo_Sensor VARCHAR(30) NOT NULL, -- O CAMPO NÃO PODE SER NULO
+	umidade_Sensor DOUBLE,
+	temperatura_Sensor DOUBLE,
+	dtManutencao_Sensor DATETIME,
+	status_Sensor VARCHAR(40),
+	CONSTRAINT chkStatus -- <= É UMA RESTRIÇÃO ACEITANDO APENAS AS INFORMAÇÕES ABAIXO:
+		CHECK (status_Sensor IN ('Ativo', 'Inativo', 'Manutenção'))
+	);
+
+
+
+INSERT INTO tbSensor VALUES
+	(default, 'DHT11','2025-02-17 13:14:00','Pendente');
+/* ERROR 1136 (21S01): Column count doesn't match value count at row 1 */]]
+
+
+
+
+INSERT INTO tbSensor (id_Sensor, tipo_Sensor, dtManutencao_Sensor, status_Sensor)VALUES
+	(default, 'DHT11','2025-02-17 13:16:00','Ativo'),
+	(default, 'LM35','2025-02-16 14:00:00','Inativo');
+
+
+SELECT * FROM tbSensor;
+
++-----------+-------------+----------------+--------------------+---------------------+---------------+
+| id_Sensor | tipo_Sensor | umidade_Sensor | temperatura_Sensor | dtManutencao_Sensor | status_Sensor |
++-----------+-------------+----------------+--------------------+---------------------+---------------+
+|         1 | DHT11       |           NULL |               NULL | 2025-02-17 13:16:00 | Ativo         |
+|         2 | LM35        |           NULL |               NULL | 2025-02-16 14:00:00 | Inativo       |
++-----------+-------------+----------------+--------------------+---------------------+---------------+
+
+ALTER TABLE tbSensor 
+	MODIFY COLUMN dtManutencao_Sensor DATETIME DEFAULT CURRENT_TIMESTAMP; -- <= passa data automaticamente
+
+INSERT INTO tbSensor (id_Sensor, tipo_Sensor, status_Sensor)VALUES
+	(default, 'DHT11','	Manutenção');
+
+-- EXCLUINDO UMA CONSTRAINT
+ALTER TABLE tbSensor DROP CONSTRAINT chkStatus;
+
+	INSERT INTO tbSensor (id_Sensor, tipo_Sensor, status_Sensor)VALUES
+		(default, 'LM35','Pendente');
+
+SELECT * FROM tbSensor;
+
+
+
+-- DEPENDE DA VERSÃO DO MYSQL CASO NÃO VÁ, SERIA NECESSARIO PESQUISAR
+ALTER TABLE tbSensor ADD CONSTRAINT chkStatus
+	CHECK (status_Sensor IN ('Ativo', 'Inativo', 'Manutenção'));
+
+
+
+-- ADICIONAR UM CAMPO COM SUMERO DE SÉRIE DO SENSOR
+
+ALTER TABLE tbSensor ADD COLUMN  numSerie_Sensor CHAR(3) UNIQUE; 
+
+SELECT * FROM tbSensor;
+
+UPDATE tbSensor SET numSerie_Sensor = '001'
+	WHERE id_Sensor = 1;
+
+-- irá dar erro pois o numero de serie foi definido como unique (unico)
+UPDATE tbSensor SET numSerie_Sensor = '001'
+	WHERE id_Sensor = 2;
+
+/* ERROR 1062 (23000): Duplicate entry '001' for key 'tbsensor.numSerie_Sensor' */
+
+
+-- ALIAS (APELIDO PARA A COLUNA AO EXIBIR)
+SELECT tipo_Sensor AS 'Tipo de Sensor',
+	dtManutencao_Sensor AS 'Data de Manuteção' FROM tbSensor;
+
++----------------+---------------------+
+| Tipo de Sensor | Data de Manuteção   |
++----------------+---------------------+
+| DHT11          | 2025-02-17 13:16:00 |
+| LM35           | 2025-02-16 14:00:00 |
+| DHT11          | 2025-02-17 13:27:02 |
+| LM35           | 2025-02-17 13:29:00 |
++----------------+---------------------+
+
+-- IFNULL
+SELECT * FROM tbSensor;
+
+SELECT IFNULL (numSerie_Sensor, 'Sem número de série') FROM tbSensor;-- <= verificando campos nulos e passando nome para a exibição deles.
++---------------------------------------------------+
+| IFNULL (numSerie_Sensor, 'Sem número de série')   |
++---------------------------------------------------+
+| Sem número de série                               |
+| Sem número de série                               |
+| Sem número de série                               |
+| 001                                               |
++---------------------------------------------------+
+
+SELECT IFNULL (numSerie_Sensor, 'Sem número de série') AS 'Número de Série' FROM tbSensor;
++-----------------------+
+| Número de Série       |
++-----------------------+
+| Sem número de série   |
+| Sem número de série   |
+| Sem número de série   |
+| 001                   |
++-----------------------+
+
+-- CASE
+
+SELECT tipo_Sensor, CASE 
+	WHEN  status_Sensor = 'Manutenção' THEN 1
+	WHEN  status_Sensor = 'Pendente' THEN 'Joga fora'
+	ELSE 0
+END FROM tbSensor;
+
+
++-------------+----------------------------------------------------------------------------------------------------------------+
+| tipo_Sensor | CASE
+WHEN  status_Sensor = 'Manutenção' THEN 1
+WHEN  status_Sensor = 'Pendente' THEN 'Joga fora'
+ELSE 0
+END   |
++-------------+----------------------------------------------------------------------------------------------------------------+
+| DHT11       | 0                                                                                                              |
+| LM35        | 0                                                                                                              |
+| DHT11       | 1                                                                                                              |
+| LM35        | Joga fora                                                                                                      |
++-------------+----------------------------------------------------------------------------------------------------------------+
+
+
+ALTER TABLE tbSensor ADD COLUMN nome_Sensor VARCHAR(20) DEFAULT 'Sem nome';
+
+INSERT INTO tbSensor(tipo_Sensor) VALUES
+	('LM35');
+
+INSERT INTO tbSensor (tipo_Sensor, nome_Sensor) VALUES
+	('DMT11','Sensivel');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
