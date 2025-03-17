@@ -32,7 +32,7 @@ CREATE TABLE tbAtleta(
 -- • Inserir dados na tabela, procurando colocar mais de um atleta para cada
 -- modalidade e pelo menos 5 atletas.
 
-INSERT INTO tbAtleta (nomeAtleta, modalidadeAtleta, qnrMedalha, fkPais) VALUES
+INSERT INTO tbAtleta (nomeAtleta, modalidadeAtleta, qntMedalha, fkPais) VALUES
     ('Armando','Futebol', 5, 1),
     ('Cláudia','Volei', 2, 2),
     ('Maria','Basquete', 1, 4),
