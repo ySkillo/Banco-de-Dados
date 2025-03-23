@@ -173,7 +173,80 @@ SELECT
     FROM tbPessoa as p
 		JOIN tbReserva as r
 			ON p.idPessoa = r.fk_Pessoa;
+
+
+-- Exercico 4
+
+-- - Criar as tabelas;
+
+-- - Inserir 5 registros
+
+-- - Configurar chave estrangeira
+
+-- - Exibir dados;
+
+-- - Exibir dados com AS;
+
+-- - Exibir dados com CASE;
+
+-- - Exibir dados com IFNULL;
             
+CREATE TABLE Pessoa1 (
+    idPessoa1 INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(45),
+    dtNascimento DATE
+);
+
+CREATE TABLE Pessoa2 (
+    idPessoa2 INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(45),
+    dtNascimento DATE,
+    fkPessoa1 INT
+    
+);
+
+INSERT INTO Pessoa1 (nome, dtNascimento) VALUES
+('Ana Silva', '1990-05-15'),
+('Carlos Souza', '1985-08-22'),
+('Mariana Costa', '1992-12-10'),
+('João Pereira', '2000-03-05'),
+('Fernanda Lima', '1995-07-19');
+
+INSERT INTO Pessoa2 (nome, dtNascimento, fkPessoa1) VALUES
+('Lucas Oliveira', '1998-09-12', 1),
+('Beatriz Santos', '1997-06-25', 2),
+('Gabriel Lima', '2001-01-30', 3),
+('Larissa Mendes', '1999-04-18', 4),
+('Rafael Torres', '2002-11-22', 5);
+
+alter table Pessoa2 ADD FOREIGN KEY (fkPessoa1) REFERENCES Pessoa1(idPessoa1);
+
+
+SELECT * FROM Pessoa1;
+SELECT * FROM Pessoa2;
+
+
+SELECT p1.nome AS 'Nome Pessoa1', p2.nome AS 'Nome Pessoa2'
+FROM Pessoa1 p1
+JOIN Pessoa2 p2 
+ON p1.idPessoa1 = p2.fkPessoa1;
+
+
+SELECT p1.nome AS 'Nome Pessoa1',
+       p2.nome AS 'Nome Pessoa2',
+       CASE
+           WHEN YEAR(p1.dtNascimento) < 1990 THEN 'Nasceu antes de 1990'
+           ELSE 'Nasceu em 1990 ou depois'
+       END AS 'Classificação'
+FROM Pessoa1 p1
+JOIN Pessoa2 p2 ON p1.idPessoa1 = p2.fkPessoa1;
+
+
+SELECT p1.nome AS 'Nome Pessoa1',
+       IFNULL(p2.nome, 'Sem correspondente') AS 'Nome Pessoa2'
+FROM Pessoa1 p1
+JOIN Pessoa2 p2 ON p1.idPessoa1 = p2.fkPessoa1;
+
 
 
 
